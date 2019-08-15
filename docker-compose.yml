@@ -1,0 +1,38 @@
+version: '2' # 目前使用的版本，可以參考官網：
+services: # services 專案中的服務
+  apache:
+    image: php:7.2-apache
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - /Users/ChienMingFan/Downloads/20190817-COSCUP/workshop:/var/www/html
+    # 要從本地資料夾 mount 掛載進去的資料
+    networks:
+      - coscup  # 連結到 coscup，讓 container 可以互通網路
+  FTP:
+    image: bogem/ftp
+    restart: always
+    ports:
+      - '20:20'
+      - '21:21'
+      - '47400-47470:47400-47470'
+    volumes:
+      - /Users/ChienMingFan/Downloads/20190817-COSCUP/workshop/ftp:/home/vsftpd
+    environment:
+      FTP_USER: 'coscup'
+      FTP_PASS: 'coscup'
+      PASV_ADDRESS: '127.0.0.1'
+    networks:
+      - coscup
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'coscup'
+    networks:
+      - coscup
+networks:
+  coscup:
